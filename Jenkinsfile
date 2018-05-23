@@ -1,15 +1,21 @@
-pipeline {
-    agent {
-        docker {
-            image 'maven:3-alpine'
-            args '-v /Users/wizhu/.m2:/home/wizhu/.m2'
+node {
+    stage('build') {
+        checkout scm
+        withEnv(["PATH+MAVEN=${tool 'M3'}/bin"]) {
+            sh 'pwd;ls'
+            sh 'cd my-app;mvn clean verify'
         }
+        archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+        junit '**/target/**/*.xml'
     }
-    stages {
-        stage('Build') {
-            steps {
-                sh 'cd my-app;mvn -B -DskipTests clean package'
-            }
-        }
+    stage('integration test') {
+      echo 'integration test'
     }
+    stage('deploy') {
+
+          if(currentBuild.result == null || currentBuild.result == 'SUCESUCCESSS') {
+             echo "deploying ${currentBuild.number}"
+          }
+    }
+
 }
