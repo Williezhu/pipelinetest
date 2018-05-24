@@ -9,7 +9,7 @@ node {
         junit '**/target/**/*.xml'
     }
     stage('integration test') {
-      echo 'integration test'
+      echo 'integration tesit adsfa'
     }
     stage('deploy') {
 
